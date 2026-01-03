@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 2 – Select Units</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body {
+            background-image: url("https://www.jswpaints.in/sites/default/files/blog_images/brown-combi8.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .page-overlay { background: rgba(0, 0, 0, 0.35); min-height: 100vh; }
+
+        /* TOP BAR */
+        .top-bar-wrapper { padding: 16px 40px 0; }
+        .top-bar {
+            height: 70px; background: white; border-radius: 16px; padding: 0 30px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .logo-img { height: 40px; width: auto; }
+        .nav-links { display: flex; gap: 24px; font-size: 13px; }
+        .nav-links a { color: #333; text-decoration: none; }
+        .nav-links a:hover { text-decoration: underline; }
+
+        /* MAIN CARD */
+        .main-container { display: flex; justify-content: center; padding: 60px 0; }
+        .card {
+            width: 70%; max-width: 900px; background: white; padding: 40px 50px;
+            border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .page-title { text-align: center; font-size: 22px; margin-bottom: 5px; }
+        .page-step { text-align: center; font-size: 12px; color: #777; margin-bottom: 30px; }
+        .section-title { font-size: 16px; margin-bottom: 12px; }
+        .button-group { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+
+        .btn-option {
+            border: 1px solid #e53935; padding: 10px 24px; border-radius: 4px;
+            font-size: 12px; color: #e53935; background: #fff; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-option:hover { background: #e53935; color: #fff; }
+
+        /* COMPLETED STATE */
+        .btn-option.completed {
+            background-color: #2e7d32; color: white; border-color: #2e7d32;
+        }
+        .btn-option.completed::after { content: " ✔"; font-weight: bold; }
+
+        .btn-back, .btn-next {
+            text-decoration: none; color: white; padding: 10px 30px; border-radius: 4px;
+            font-size: 12px; display: inline-block; margin: 8px 5px 0; border: none; cursor: pointer;
+        }
+        .btn-back { background: #777; } .btn-back:hover { background: #555; }
+        .btn-next { background: #e53935; } .btn-next:hover { background: #c62828; }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-card {
+            width: 750px; max-width: 95%; background: #ffffff;
+            border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            padding: 24px 24px 20px; position: relative;
+        }
+        .modal-header { margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-title { font-size: 18px; font-weight: bold; color: #333; }
+        .modal-close {
+            position: absolute; top: 15px; right: 15px; border: none;
+            background: transparent; font-size: 24px; color: #777; cursor: pointer; line-height: 1;
+        }
+        .modal-section { margin-bottom: 16px; }
+        .modal-label { font-size: 13px; margin-bottom: 6px; display: block; color: #444; font-weight: 500; }
+        .modal-select, .modal-input, .modal-textarea {
+            width: 100%; padding: 10px; font-size: 13px; border-radius: 4px; border: 1px solid #ccc;
+        }
+        .modal-input-fixed { background-color: #f0f0f0; color: #555; border: 1px solid #ccc; pointer-events: none; }
+        .modal-textarea { resize: vertical; min-height: 70px; }
+        .modal-footer { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee; }
+
+        .btn-icon-back {
+            display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px;
+            border-radius: 4px; border: none; background: #777; color: #fff; font-size: 12px; cursor: pointer;
+        }
+
+        /* UPDATED DONE BUTTON STYLE */
+        .btn-save {
+            padding: 8px 24px;
+            border-radius: 4px;
+            border: none;
+            background: #e53935; /* RED BACKGROUND */
+            color: #ffffff;      /* WHITE TEXT */
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-save:hover { background: #c62828; }
+
+        /* LIST & ROWS */
+        .acc-list-container { margin-top: 20px; max-height: 350px; overflow-y: auto; border-top: 1px solid #eee; }
+        .acc-item-row {
+            display: grid; grid-template-columns: 80px 1fr 100px 80px;
+            gap: 15px; padding: 10px 0; border-bottom: 1px solid #eee; align-items: center;
+        }
+        .acc-item-img {
+            width: 80px; height: 60px; border: 1px solid #ddd; border-radius: 4px;
+            object-fit: contain; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999;
+        }
+        .acc-item-desc { font-size: 13px; color: #333; font-weight: bold; }
+        .acc-item-sub { font-weight: normal; font-size: 12px; color: #666; display: block; margin-top: 3px; }
+        .acc-item-price { font-size: 13px; font-weight: bold; color: #e53935; text-align: right; }
+
+        /* ADD BUTTON STYLE */
+        .acc-add-btn {
+            background: #e53935; color: white; border: none; padding: 6px 12px;
+            border-radius: 4px; font-size: 11px; cursor: pointer; width: 100%;
+        }
+        .acc-add-btn:hover { background: #c62828; }
+        .acc-add-btn.added { background: #2e7d32; cursor: default; }
+
+        /* EDIT SIZE INPUTS */
+        .size-edit-wrapper { display: flex; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+        .size-input { width: 50px; padding: 2px 4px; font-size: 11px; border: 1px solid #999; border-radius: 3px; }
+        .btn-edit-size { background: none; border: none; cursor: pointer; font-size: 14px; color: #1976d2; margin-left: 5px; }
+        .btn-edit-size:hover { color: #0d47a1; text-decoration: underline; }
+
+        /* SELECTED ITEMS LIST */
+        .selected-wrapper { margin-top: 30px; display: none; /* HIDDEN BY DEFAULT */ }
+        .selected-title { font-size: 15px; margin-bottom: 10px; font-weight: bold; }
+        .selected-list { display: flex; flex-direction: column; gap: 12px; }
+        .selected-card {
+            width: 100%; border-radius: 6px; border: 1px solid #e0e0e0;
+            padding: 12px 16px; background: #fafafa;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-size: 13px;
+            position: relative;
+            display: grid; grid-template-columns: 1.5fr 2fr 1fr auto;
+            align-items: center; gap: 15px;
+        }
+        .selected-card-title { font-weight: bold; color: #e53935; font-size: 13px; }
+        .selected-card-details { color: #555; font-size: 12px; line-height: 1.4; }
+        .selected-card-price { font-weight: bold; font-size: 13px; text-align: right; }
+        .remove-card-btn {
+            background: transparent; border: none; color: #999;
+            font-size: 20px; font-weight: bold; cursor: pointer;
+            line-height: 1; padding: 0 0 0 10px;
+        }
+        .remove-card-btn:hover { color: #d32f2f; }
+
+        .spec-body { display: grid; grid-template-columns: 220px 1fr; gap: 20px; margin-top: 15px; }
+        .spec-image-box { width: 100%; height: 160px; border-radius: 6px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #777; overflow: hidden; background: #f9f9f9; }
+        .spec-text { font-size: 13px; line-height: 1.4; color: #444; margin-bottom: 10px; }
+        .spec-meta { font-size: 13px; margin-bottom: 4px; }
+        .spec-meta span { font-weight: bold; }
+
+        .summary-bar { margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .summary-total { font-weight: bold; }
+        .summary-actions { display: flex; gap: 10px; }
+
+        #enquiryModal .modal-card { width: 600px; }
+        .enq-row { display: flex; gap: 15px; margin-bottom: 16px; }
+        .enq-col { flex: 1; }
+    </style>
+</head>
+<body>
+
+<div class="page-overlay">
+    <div class="top-bar-wrapper">
+        <div class="top-bar">
+            <img class="logo-img" src="https://hollyblueinterio.com/images/abc/logo.png" alt="HollyBlue">
+            <div class="nav-links">
+                <a href="/">Home</a><a href="#">Our Company</a><a href="#">Our Services</a><a href="#">Our Works</a><a href="#">Contact Us</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="card">
+            <div class="page-title">LET'S GET STARTED</div>
+            <div class="page-step">SELECT YOUR MODULES</div>
+            <div class="section">
+                <div class="section-title">Choose your units</div>
+                <div class="button-group">
+                    <button id="btn-kitchen" class="btn-option" type="button" onclick="openSpecModal()">Kitchen</button>
+                    <button id="btn-accessories" class="btn-option" type="button" onclick="openAccessoryModal()">Kitchen Accessories</button>
+                    <button id="btn-tv" class="btn-option" type="button" onclick="openTvModal()">TV Unit</button>
+                    <button id="btn-washing" class="btn-option" type="button" onclick="openUniversalModal('Washing Unit')">Washing Unit</button>
+                    <button id="btn-mirror" class="btn-option" type="button" onclick="openUniversalModal('Mirror')">Mirror</button>
+                    <button id="btn-partition" class="btn-option" type="button" onclick="openUniversalModal('Partition')">Partition</button>
+                    <button id="btn-breakfast" class="btn-option" type="button" onclick="openUniversalModal('Break Fast Table')">Break Fast Table</button>
+                    <button id="btn-bedcot" class="btn-option" type="button" onclick="openUniversalModal('BedCOT')">BedCOT</button>
+                    <button id="btn-headboard" class="btn-option" type="button" onclick="openUniversalModal('Head Board')">Head Board</button>
+                    <button id="btn-wallpanel" class="btn-option" type="button" onclick="openUniversalModal('Wall Panel')">Wall Panel</button>
+                    <button id="btn-texture" class="btn-option" type="button" onclick="openUniversalModal('Texture Paint')">Texture Paint</button>
+                    <button id="btn-side" class="btn-option" type="button" onclick="openUniversalModal('Side Table')">Side Table</button>
+                    <button id="btn-wardrobe" class="btn-option" type="button" onclick="openUniversalModal('Wardrobe')">WardRob</button>
+                    <button id="btn-dressing" class="btn-option" type="button" onclick="openUniversalModal('Dressing')">Dressing</button>
+                    <button id="btn-vanity" class="btn-option" type="button" onclick="openUniversalModal('Vanity')">Vanity</button>
+                </div>
+            </div>
+
+            <div class="selected-wrapper" id="selectedWrapper">
+                <div class="selected-title">Selected items</div>
+                <div id="selectedList" class="selected-list"></div>
+                <div id="summaryBar" class="summary-bar" style="display:none;">
+                    <div class="summary-total">Total Amount: <span id="totalAmount">₹ 0.00</span></div>
+                    <div class="summary-actions">
+                        <a href="/" class="btn-back">← Back to Home</a>
+                        <button type="button" class="btn-next" onclick="openEnquiryModal()">Submit Enquiry</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="specModal">
+    <div class="modal-card">
+        <button class="modal-close" type="button" onclick="closeSpecModal()">×</button>
+        <div class="modal-header"><div class="modal-title" id="specTitle">Kitchen Specification</div></div>
+
+        <div class="modal-section">
+            <label class="modal-label">Kitchen Shape</label>
+            <select id="kitchenShape" class="modal-select" onchange="updateKitchenList()">
+                <option>STRAIGHT KITCHEN</option>
+                <option>L SHAPE KITCHEN</option>
+                <option>U SHAPE KITCHEN</option>
+            </select>
+        </div>
+
+        <div class="modal-section">
+            <label class="modal-label">Unit Filter</label>
+            <select id="unitFilter" class="modal-select" onchange="updateKitchenList()">
+                <option value="Both">Both (Bottom & Wall)</option>
+                <option value="BOTTOM UNIT">Bottom Unit Only</option>
+                <option value="WALL UNIT">Wall Unit Only</option>
+            </select>
+        </div>
+
+        <div class="modal-section">
+            <label class="modal-label">Material</label>
+            <select id="materialType" class="modal-select" onchange="updateKitchenList()">
+                <option>PLY WITH LAM</option><option>PLY WITH ACRYLIC</option><option>PLY WITH VENEER</option><option>WPC WITH LAM</option>
+            </select>
+        </div>
+
+        <div class="modal-section">
+            <div style="background:#f9f9f9; padding:10px; border:1px dashed #ccc; font-size:12px; color:#444; line-height:1.4;">
+                <strong>Specification:</strong><br>
+                <span id="kitchenSpecText"></span>
+            </div>
+        </div>
+
+        <div id="kitchenListContainer" class="acc-list-container">
+            </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-icon-back" onclick="closeSpecModal()">← Close</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="accModal">
+    <div class="modal-card">
+        <button class="modal-close" type="button" onclick="closeAccModal()">×</button>
+        <div class="modal-header"><div class="modal-title">Kitchen Accessories</div></div>
+        <div class="modal-section"><label class="modal-label">Category</label><input type="text" class="modal-input modal-input-fixed" value="Kitchen Accessories" readonly></div>
+        <div class="modal-section"><label class="modal-label">Unit Type</label><select id="accUnitType" class="modal-select" onchange="updateAccDetails()"><option>BOTTOM UNIT</option><option>WALL UNIT</option></select></div>
+        <div class="modal-section"><label class="modal-label">Material</label><select id="accMaterialType" class="modal-select" onchange="updateAccDetails()"><option>PLY WITH LAM</option><option>PLY WITH ACRYLIC</option><option>PLY WITH VENEER</option><option>WPC WITH LAM</option></select></div>
+        <div id="accListContainer" class="acc-list-container"></div>
+        <div class="modal-footer"><button type="button" class="btn-icon-back" onclick="closeAccModal()">← Close</button></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="tvModal">
+    <div class="modal-card">
+        <button class="modal-close" type="button" onclick="closeTvModal()">×</button>
+        <div class="modal-header"><div class="modal-title">TV Unit Specification</div></div>
+        <div class="modal-section"><label class="modal-label">Category</label><input type="text" class="modal-input modal-input-fixed" value="TV Unit" readonly></div>
+        <div class="modal-section"><label class="modal-label">Unit Type</label><input type="text" class="modal-input modal-input-fixed" value="BOTTOM UNIT" readonly></div>
+        <div class="modal-section"><label class="modal-label">Material</label><select id="tvMaterial" class="modal-select" onchange="updateTvDetails()"><option>PLY WITH LAM</option><option>PLY WITH ACRYLIC</option><option>PLY WITH VENEER</option><option>WPC WITH LAM</option></select></div>
+        <div class="modal-section"><label class="modal-label">Size</label><select id="tvSize" class="modal-select" onchange="updateTvDetails()"><option value="1200">1200mmx300mmx400mm</option><option value="1500">1500mmx300mmx400mm</option><option value="1800">1800mmx300mmx400mm</option><option value="2000">2000mmx300mmx400mm</option></select></div>
+        <div class="spec-body"><div class="spec-image-box">Image / 3D View<br>(coming soon)</div><div><p class="spec-text" id="tvSpecText"></p><p class="spec-meta"><span>Category:</span> TV Unit</p><p class="spec-meta"><span>Material:</span> <span id="tvMetaMaterial"></span></p><p class="spec-meta"><span>Size:</span> <span id="tvMetaSize"></span></p><p class="spec-meta"><span>Price:</span> <span id="tvMetaPrice"></span></p></div></div>
+        <div class="modal-footer"><button type="button" class="btn-icon-back" onclick="closeTvModal()">← Back</button><button type="button" class="btn-save" onclick="addTvToList()">Done</button></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="universalModal">
+    <div class="modal-card">
+        <button class="modal-close" type="button" onclick="closeUniversalModal()">×</button>
+        <div class="modal-header"><div class="modal-title" id="univTitle">Unit Specification</div></div>
+        <div class="modal-section"><label class="modal-label">Category</label><input type="text" id="univCategory" class="modal-input modal-input-fixed" readonly></div>
+        <div class="modal-section" id="univTypeWrapper" style="display:none;"><label class="modal-label">Type</label><select id="univSubType" class="modal-select" onchange="updateUniversalDetails()"></select></div>
+        <div class="modal-section"><label class="modal-label">Material</label><select id="univMaterial" class="modal-select" onchange="updateUniversalDetails()"><option>PLY WITH LAM</option><option>PLY WITH ACRYLIC</option><option>PLY WITH VENEER</option><option>WPC WITH LAM</option></select></div>
+        <div class="modal-section" id="univSizeWrapper"><label class="modal-label">Size</label><select id="univSize" class="modal-select" onchange="updateUniversalDetails()"></select></div>
+        <div class="spec-body"><div class="spec-image-box">Image / 3D View<br>(coming soon)</div><div><p class="spec-text" id="univSpecText"></p><p class="spec-meta"><span>Category:</span> <span id="univMetaCat"></span></p><p class="spec-meta"><span>Material:</span> <span id="univMetaMaterial"></span></p><p class="spec-meta"><span>Size:</span> <span id="univMetaSize"></span></p><p class="spec-meta"><span>Price:</span> <span id="univMetaPrice"></span></p></div></div>
+        <div class="modal-footer"><button type="button" class="btn-icon-back" onclick="closeUniversalModal()">← Back</button><button type="button" class="btn-save" onclick="addUniversalToList()">Done</button></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="enquiryModal">
+    <div class="modal-card">
+        <button class="modal-close" type="button" onclick="closeEnquiryModal()">×</button>
+        <div class="modal-header"><div class="modal-title">Enquiry Form</div></div>
+
+        <div class="enq-row">
+            <div class="enq-col">
+                <label class="modal-label">Name</label>
+                <input id="enqName" type="text" class="modal-input">
+            </div>
+            <div class="enq-col">
+                <label class="modal-label">Email ID</label>
+                <input id="enqEmail" type="email" class="modal-input">
+            </div>
+        </div>
+
+        <div class="enq-row">
+            <div class="enq-col">
+                <label class="modal-label">Mobile Number</label>
+                <input id="enqMobile" type="text" class="modal-input">
+            </div>
+            <div class="enq-col">
+                <label class="modal-label">Location</label>
+                <input id="enqLocation" type="text" class="modal-input">
+            </div>
+        </div>
+
+        <div class="enq-row">
+            <div class="enq-col">
+                <label class="modal-label">Total Square Feet</label>
+                <input id="enqSqFt" type="text" class="modal-input">
+            </div>
+            <div class="enq-col">
+                <label class="modal-label">Preferred Contact Time</label>
+                <select id="enqTime" class="modal-select">
+                    <option>Morning</option>
+                    <option>Afternoon</option>
+                    <option>Evening</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <label class="modal-label">House Current Status</label>
+            <select id="enqStatus" class="modal-select">
+                <option>New Home</option>
+                <option>Planning</option>
+                <option>Foundation</option>
+                <option>Designing</option>
+            </select>
+        </div>
+
+        <div class="modal-section">
+            <label class="modal-label">Custom Message</label>
+            <textarea id="enqRenovation" class="modal-textarea" placeholder=" details..."></textarea>
+        </div>
+
+        <div class="modal-footer" style="justify-content: flex-end;"><button type="button" class="btn-save" onclick="submitEnquiry()">Confirm</button></div>
+    </div>
+</div>
+
+<script>
+    // === KITCHEN SPECIFICATION ===
+    const standardKitchenSpec = "Supply and Installation of cabinets made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.Shutters are made with 16MM 710 BWP Marine plywood finished with laminate. Back panel 8mm pvc with .7mm one side laminate. Edgebands are Star/Rehau/E3 . Hinges and other accessories are HETTICH Soft Close.";
+
+    // === DATA STORAGE ===
+    const unitData = {
+        "Washing Unit": { spec: "Supplying and Installation of cabinets made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["650mm x 600mm x 750mm"], prices: { "PLY WITH LAM": 18705, "PLY WITH ACRYLIC": 20892, "PLY WITH VENEER": 20892, "WPC WITH LAM": 22633 } },
+        "Mirror": { spec: "5mm Saint Gobain mirror with 12mm ply backing. Edgebands are Star/Rehau/E3.", hasSubtypes: true, subtypes: ["Light Touch Mirror"], sizes: ["600mm x 750mm"], prices: { "PLY WITH LAM": 3773, "PLY WITH ACRYLIC": 3773, "PLY WITH VENEER": 3773, "WPC WITH LAM": 3773 } },
+        "Partition": { spec: "Supply and Installation of partition made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", hasSubtypes: true, subtypes: ["Living Partition"], sizes: ["1500mm x 3000mm"], prices: { "PLY WITH LAM": 37732, "PLY WITH ACRYLIC": 42144, "PLY WITH VENEER": 42144, "WPC WITH LAM": 45656 } },
+        "Break Fast Table": { spec: "Supply and Installation of breakfast table made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["2 Seater (1200mm x 450mm x 1100mm)", "3 Seater (1500mm x 450mm x 1100mm)"], prices_matrix: { "PLY WITH LAM": [27158, 32082], "PLY WITH ACRYLIC": [33180, 39211], "PLY WITH VENEER": [33180, 39211], "WPC WITH LAM": [38153, 45427] } },
+        "Head Board": { spec: "Supply and Installation of Head board made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["3000mm x 1200mm"], prices: { "PLY WITH LAM": 23628, "PLY WITH ACRYLIC": 26391, "PLY WITH VENEER": 26391, "WPC WITH LAM": 28590 } },
+        "Wall Panel": { spec: "Supply and Installation of Wall panelling made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["3000mm x 2400mm"], prices: { "PLY WITH LAM": 47256, "PLY WITH ACRYLIC": 52782, "PLY WITH VENEER": 52782, "WPC WITH LAM": 57180 } },
+        "Texture Paint": { spec: "Supply and application of texture paint.", sizes: ["3000mm x 2400mm"], prices: { "PLY WITH LAM": 10800, "PLY WITH ACRYLIC": 10800, "PLY WITH VENEER": 10800, "WPC WITH LAM": 10800 } },
+        "Side Table": { spec: "Supply and Installation of side table made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["450mm x 400mm x 450mm"], prices: { "PLY WITH LAM": 6571, "PLY WITH ACRYLIC": 7340, "PLY WITH VENEER": 7340, "WPC WITH LAM": 7951 } },
+        "Dressing": { spec: "Supply and Installation of dressing unit made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["600mm x 450mm x 2100mm"], prices: { "PLY WITH LAM": 18721, "PLY WITH ACRYLIC": 20910, "PLY WITH VENEER": 20910, "WPC WITH LAM": 22652 } },
+        "Vanity": { spec: "Supply and Installation of vanity counter made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["750mm x 450mm x 450mm"], prices: { "PLY WITH LAM": 10952, "PLY WITH ACRYLIC": 12233, "PLY WITH VENEER": 12233, "WPC WITH LAM": 13252 } },
+        "Wardrobe": { spec: "Supply and Installation of Wardrobe made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", sizes: ["1200mm x 600mm x 2100mm", "1500mm x 600mm x 2100mm", "1800mm x 600mm x 2100mm", "2000mm x 600mm x 2100mm", "2400mm x 600mm x 2100mm"], prices_matrix: { "PLY WITH LAM": [38870, 48588, 58305, 64783, 77740], "PLY WITH ACRYLIC": [43416, 54270, 65124, 72360, 86832], "PLY WITH VENEER": [43416, 54270, 65124, 72360, 86832], "WPC WITH LAM": [47032, 58790, 70548, 78387, 94064] } },
+        "BedCOT": { spec: "Supply and Installation of cot made with 16MM 710 BWP Marine plywood finished with 0.8mm both side white colour laminate.", hasSubtypes: true, subtypes: ["With Storage", "Without Storage"], sizes: ["King (1800x2000)", "Queen (1500x2000)"], prices_complex: { "PLY WITH LAM": { "With Storage": [48989, 42385], "Without Storage": [35147, 31012] }, "PLY WITH ACRYLIC": { "With Storage": [54718, 47341], "Without Storage": [39260, 34640] }, "PLY WITH VENEER": { "With Storage": [54718, 47341], "Without Storage": [39260, 34640] }, "WPC WITH LAM": { "With Storage": [59278, 51286], "Without Storage": [42528, 37525] } } }
+    };
+
+    // Global Vars
+    let cart = [], currentKitchenItems = [], currentAccItems = [];
+    let tvSelection = null, univSelection = null;
+    const btnMap = { "Washing Unit": "btn-washing", "Mirror": "btn-mirror", "Partition": "btn-partition", "Break Fast Table": "btn-breakfast", "BedCOT": "btn-bedcot", "Head Board": "btn-headboard", "Wall Panel": "btn-wallpanel", "Texture Paint": "btn-texture", "Side Table": "btn-side", "Wardrobe": "btn-wardrobe", "Dressing": "btn-dressing", "Vanity": "btn-vanity", "Kitchen": "btn-kitchen", "TV Unit": "btn-tv", "Kitchen Accessories": "btn-accessories" };
+    function formatPrice(num) { return "₹ " + num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+    // --- KITCHEN LOGIC (GREEN BUTTON MODEL) ---
+    function openSpecModal() {
+        document.getElementById("kitchenShape").value="STRAIGHT KITCHEN";
+        document.getElementById("materialType").value="PLY WITH LAM";
+        updateKitchenList();
+        document.getElementById("specModal").classList.add("show");
+    }
+    function closeSpecModal() { document.getElementById("specModal").classList.remove("show"); }
+
+    function updateKitchenList() {
+        const shape = document.getElementById('kitchenShape').value, mat = document.getElementById('materialType').value;
+        const filter = document.getElementById('unitFilter').value;
+        const container = document.getElementById("kitchenListContainer");
+        const specTextEl = document.getElementById("kitchenSpecText");
+
+        container.innerHTML = "";
+
+        // Update Spec Text in Popup
+        let fullSpec = standardKitchenSpec;
+        if(mat === "PLY WITH VENEER") fullSpec += " Veneer polishing additional.";
+        specTextEl.innerText = fullSpec;
+
+        let items = [];
+        let bPrice=0, wPrice=0, bLen=0, wLen=0, bHeight=850, wHeight=650, bDepth=600, wDepth=600; // Wall Unit Depth Changed to 600
+
+        if(shape==="STRAIGHT KITCHEN"){
+            bLen=3000; wLen=1500;
+            if(mat==="PLY WITH LAM"){ bPrice=55059; wPrice=19753; }
+            else if(mat==="PLY WITH ACRYLIC" || mat==="PLY WITH VENEER"){ bPrice=61097; wPrice=22040; }
+            else if(mat==="WPC WITH LAM"){ bPrice=64345; wPrice=23876; }
+        } else if(shape==="L SHAPE KITCHEN"){
+            bLen=5400; wLen=4150;
+            if(mat==="PLY WITH LAM"){ bPrice=80090; wPrice=54588; }
+            else if(mat==="PLY WITH ACRYLIC" || mat==="PLY WITH VENEER"){ bPrice=88946; wPrice=60976; }
+            else if(mat==="WPC WITH LAM"){ bPrice=94436; wPrice=66056; }
+        } else if(shape==="U SHAPE KITCHEN"){
+            bLen=7800; wLen=4150;
+            if(mat==="PLY WITH LAM"){ bPrice=140473; wPrice=69715; }
+            else if(mat==="PLY WITH ACRYLIC" || mat==="PLY WITH VENEER"){ bPrice=156173; wPrice=77873; }
+            else if(mat==="WPC WITH LAM"){ bPrice=167107; wPrice=84361; }
+        }
+
+        const bSqFt = (bLen * bHeight) / 92903.04;
+        const wSqFt = (wLen * wHeight) / 92903.04;
+        const bRate = bPrice / bSqFt;
+        const wRate = wPrice / wSqFt;
+
+        if(filter === "Both" || filter === "BOTTOM UNIT") {
+            items.push({ name: "BOTTOM UNIT", shape: shape, len: bLen, height: bHeight, depth: bDepth, rate: bRate, price: bPrice, spec: fullSpec });
+        }
+        if(filter === "Both" || filter === "WALL UNIT") {
+            items.push({ name: "WALL UNIT", shape: shape, len: wLen, height: wHeight, depth: wDepth, rate: wRate, price: wPrice, spec: fullSpec });
+        }
+
+        currentKitchenItems = items;
+
+        items.forEach((item, index) => {
+            const row = document.createElement("div"); row.className="acc-item-row";
+            const sizeStr = `${item.len}mm x ${item.depth}mm x ${item.height}mm`;
+
+            row.innerHTML = `
+                <div class="spec-image-box" style="width:80px;height:60px;font-size:10px;text-align:center;line-height:60px;">Img</div>
+                <div>
+                    <div class="acc-item-desc">${item.name} (${item.shape})</div>
+                    <div class="size-edit-wrapper" id="size-wrap-${index}">
+                        <span class="acc-item-sub" id="size-txt-${index}">${sizeStr}</span>
+                        <button class="btn-edit-size" onclick="editAllSizes(${index})">✎</button>
+                    </div>
+                </div>
+                <div class="acc-item-price" id="price-txt-${index}">${formatPrice(item.price)}</div>
+                <div style="text-align:right;">
+                    <button type="button" class="acc-add-btn" onclick="addSingleKitchenItem(this, ${index})">Add</button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function editAllSizes(index) {
+        const item = currentKitchenItems[index];
+        const wrap = document.getElementById(`size-wrap-${index}`);
+        wrap.innerHTML = `
+            L:<input type="number" class="size-input" id="inp-len-${index}" value="${item.len}" onchange="recalcAll(${index})">
+            D:<input type="number" class="size-input" id="inp-depth-${index}" value="${item.depth}" onchange="recalcAll(${index})">
+            H:<input type="number" class="size-input" id="inp-height-${index}" value="${item.height}" onchange="recalcAll(${index})">
+            <button class="btn-edit-size" onclick="recalcAll(${index})">Set</button>
+        `;
+    }
+
+    function recalcAll(index) {
+        const item = currentKitchenItems[index];
+        const lInp = document.getElementById(`inp-len-${index}`), dInp = document.getElementById(`inp-depth-${index}`), hInp = document.getElementById(`inp-height-${index}`);
+        if(lInp && dInp && hInp) {
+            item.len = parseFloat(lInp.value) || item.len;
+            item.depth = parseFloat(dInp.value) || item.depth;
+            item.height = parseFloat(hInp.value) || item.height;
+            const newSqFt = (item.len * item.height) / 92903.04;
+            item.price = Math.round(newSqFt * item.rate);
+
+            const wrap = document.getElementById(`size-wrap-${index}`);
+            const sizeStr = `${item.len}mm x ${item.depth}mm x ${item.height}mm`;
+            wrap.innerHTML = `<span class="acc-item-sub" id="size-txt-${index}">${sizeStr}</span><button class="btn-edit-size" onclick="editAllSizes(${index})">✎</button>`;
+            document.getElementById(`price-txt-${index}`).innerText = formatPrice(item.price);
+        }
+    }
+
+    function addSingleKitchenItem(btn, index) {
+        const item = currentKitchenItems[index];
+        const mat = document.getElementById("materialType").value;
+        const displaySize = `${item.len}mm x ${item.depth}mm x ${item.height}mm`;
+
+        cart.push({
+            type: "Kitchen",
+            title: "Kitchen",
+            shape: `${item.name} (${item.shape})`,
+            material: mat,
+            size: displaySize, // Removed the spec text from display
+            price: item.price,
+            category: "Kitchen"
+        });
+
+        renderCart();
+        btn.innerText = "Added ✔";
+        btn.classList.add("added");
+        btn.disabled = true;
+        document.getElementById("btn-kitchen").classList.add("completed");
+    }
+
+    // --- ACCESSORIES LOGIC (GREEN BUTTON MODEL) ---
+    const plyWithLam = [ { name: "PVC CUTLERY 900MM - 1 SET", price: 1288.00, img: "image_a90c1e.png" }, { name: "INNOTECH 6\" - 1NOS", price: 4886.00, img: "image_9f2a55.png" }, { name: "CARGOPLUS PLAIN INLET 900MM", price: 2982.50, img: "image_9f0caa.png" }, { name: "CARGOPLUS THALI INLET 900MM", price: 3635.00, img: "image_9e9efb.png" }, { name: "DETERGENT HOLDER - 01 SET", price: 3022.00, img: "image_9e9b19.png" }, { name: "WASTE BIN HOLDER - 01 SET", price: 2612.00, img: "image_9e9733.png" } ];
+    const plyWithAcrylic = [ { name: "INNOTECH 4\" - 1NOS", price: 4200.00, img: "image_9eb181.png" }, { name: "PVC CUTLERY 900MM", price: 1288.00, img: "image_a90c1e.png" }, { name: "INNOTECH 6\" - 1NOS", price: 4886.00, img: "image_9f2a55.png" }, { name: "CARGOPLUS PLAIN INLET 900MM", price: 2982.50, img: "image_9f0caa.png" }, { name: "INNOTECH 8\" - 1NOS", price: 5500.00, img: "image_9d513a.png" }, { name: "CARGOPLUS THALI INLET 900MM", price: 3635.00, img: "image_9e9efb.png" }, { name: "DETERGENT HOLDER - 01 SET", price: 3022.00, img: "image_9e9b19.png" }, { name: "WASTE BIN HOLDER - 01 SET", price: 2612.00, img: "image_9e9733.png" } ];
+    const expensiveSet1 = [ ...plyWithAcrylic, { name: "GTPT 600MM - 1SET", price: 3500.00, img: "image_9d4217.png" }, { name: "SPICE PULLOUT 2TIER 200MM", price: 4155.50, img: "" } ];
+    const expensiveSet2 = [ ...expensiveSet1, { name: "CARGOTECH PLAIN (WIRE BASKET) 6\" 2nos", price: 13356.00, img: "image_9d4d7a.png" } ];
+
+    function openAccessoryModal() { document.getElementById("accUnitType").value="BOTTOM UNIT"; document.getElementById("accMaterialType").value="PLY WITH LAM"; updateAccDetails(); document.getElementById("accModal").classList.add("show"); }
+    function closeAccModal() { document.getElementById("accModal").classList.remove("show"); }
+    function updateAccDetails() {
+        const unit=document.getElementById("accUnitType").value, mat=document.getElementById("accMaterialType").value, container=document.getElementById("accListContainer");
+        container.innerHTML=""; currentAccItems = [];
+        if(mat==="PLY WITH LAM") currentAccItems=plyWithLam; else if(mat==="PLY WITH ACRYLIC") currentAccItems=plyWithAcrylic;
+        else if(mat==="PLY WITH VENEER"||mat==="WPC WITH LAM"){ if(unit==="BOTTOM UNIT") currentAccItems=expensiveSet1; else currentAccItems=expensiveSet2; }
+
+        if(currentAccItems.length>0){
+            currentAccItems.forEach((item, index)=>{
+                const row=document.createElement("div"); row.className="acc-item-row";
+                const img=item.img?`<img src="${item.img}" class="acc-item-img">`:'<div class="acc-item-img"></div>';
+                const safeName=item.name.replace(/"/g, "&quot;");
+                row.innerHTML=`${img}<div><div class="acc-item-desc">${item.name}</div></div><div class="acc-item-price">${formatPrice(item.price)}</div><div style="text-align:right;"><button type="button" class="acc-add-btn" onclick="addSingleAccItem(this, ${index})">Add</button></div>`;
+                container.appendChild(row);
+            });
+        } else { container.innerHTML=`<div style="padding:20px;text-align:center;color:#777;">No items.</div>`; }
+    }
+
+    function addSingleAccItem(btn, index) {
+        const item = currentAccItems[index];
+        const unit = document.getElementById("accUnitType").value;
+        const mat = document.getElementById("accMaterialType").value;
+        cart.push({ type:"Accessory", title:"Kitchen Accessories", shape:unit, material:mat, size:item.name, price:item.price, category:"Kitchen Accessories" });
+        renderCart();
+        btn.innerText = "Added ✔";
+        btn.classList.add("added");
+        btn.disabled = true;
+        document.getElementById("btn-accessories").classList.add("completed");
+    }
+
+    // --- TV / UNIV LOGIC (Unchanged) ---
+    function openTvModal(){ document.getElementById("tvMaterial").value="PLY WITH LAM"; document.getElementById("tvSize").value="1200"; updateTvDetails(); document.getElementById("tvModal").classList.add("show"); }
+    function closeTvModal(){ document.getElementById("tvModal").classList.remove("show"); }
+    function updateTvDetails(){
+        const mat=document.getElementById("tvMaterial").value, size=document.getElementById("tvSize").value;
+        let price=0, sizeTxt="", spec="Standard Spec";
+        if(size==="1200"){sizeTxt="1200mmx300mmx400mm"; if(mat==="PLY WITH LAM") price=9714; else if(mat==="WPC WITH LAM") price=11755; else price=10850;}
+        else if(size==="1500"){sizeTxt="1500mmx300mmx400mm"; if(mat==="PLY WITH LAM") price=12142; else if(mat==="WPC WITH LAM") price=14693; else price=13563;}
+        else if(size==="1800"){sizeTxt="1800mmx300mmx400mm"; if(mat==="PLY WITH LAM") price=14570; else if(mat==="WPC WITH LAM") price=17632; else price=16267;}
+        else if(size==="2000"){sizeTxt="2000mmx300mmx400mm"; if(mat==="PLY WITH LAM") price=16190; else if(mat==="WPC WITH LAM") price=19590; else price=18084;}
+        if(mat==="PLY WITH VENEER") spec+=" Veneer polishing additional.";
+        document.getElementById("tvSpecText").innerText=spec; document.getElementById("tvMetaMaterial").innerText=mat; document.getElementById("tvMetaSize").innerText=sizeTxt; document.getElementById("tvMetaPrice").innerText=formatPrice(price);
+        tvSelection={ type:"TV Unit", title:"TV Unit", shape:"BOTTOM UNIT", material:mat, size:sizeTxt, price:price, category:"TV Unit" };
+    }
+    function addTvToList(){ if(tvSelection){ cart.push(tvSelection); renderCart(); closeTvModal(); document.getElementById("btn-tv").classList.add("completed"); } }
+
+    function openUniversalModal(categoryName) {
+        document.getElementById("univCategory").value = categoryName; document.getElementById("univMaterial").value = "PLY WITH LAM";
+        const subTypeDiv = document.getElementById("univTypeWrapper"), subTypeSel = document.getElementById("univSubType"), config = unitData[categoryName];
+
+        // FIX: Populate Subtypes
+        subTypeSel.innerHTML = "";
+        if(config.hasSubtypes) {
+            subTypeDiv.style.display = "block";
+            config.subtypes.forEach(st => { const opt = document.createElement("option"); opt.value = st; opt.text = st; subTypeSel.appendChild(opt); });
+        } else {
+            subTypeDiv.style.display = "none";
+        }
+
+        // FIX: Populate Sizes HERE so they persist
+        const sizeSel = document.getElementById("univSize");
+        sizeSel.innerHTML = "";
+        config.sizes.forEach(sz => {
+            const opt = document.createElement("option"); opt.value = sz; opt.text = sz; sizeSel.appendChild(opt);
+        });
+
+        updateUniversalDetails();
+        document.getElementById("universalModal").classList.add("show");
+    }
+    function closeUniversalModal() { document.getElementById("universalModal").classList.remove("show"); }
+
+    function updateUniversalDetails() {
+        const cat = document.getElementById("univCategory").value, mat = document.getElementById("univMaterial").value, config = unitData[cat];
+        // Read the currently selected size (do NOT rebuild options here)
+        const sizeVal = document.getElementById("univSize").value;
+        let price = 0;
+        if(cat === "BedCOT") {
+            const type = document.getElementById("univSubType").value;
+            const sizeIndex = sizeVal.includes("King") ? 0 : 1;
+            price = config.prices_complex[mat][type][sizeIndex];
+        } else if(config.prices_matrix) {
+            const sizeIndex = config.sizes.indexOf(sizeVal);
+            price = config.prices_matrix[mat][sizeIndex];
+        } else { price = config.prices[mat]; }
+        let spec = config.spec; if(mat === "PLY WITH VENEER") spec += " Veneer polishing additional.";
+        document.getElementById("univSpecText").innerText = spec; document.getElementById("univMetaCat").innerText = cat; document.getElementById("univMetaMaterial").innerText = mat; document.getElementById("univMetaSize").innerText = sizeVal; document.getElementById("univMetaPrice").innerText = formatPrice(price);
+        univSelection = { type: "GeneralUnit", title: cat, shape: (config.hasSubtypes ? document.getElementById("univSubType").value : "Standard"), material: mat, size: sizeVal, price: price, category: cat };
+    }
+    function addUniversalToList() {
+        if(univSelection && univSelection.price > 0) {
+            cart.push(univSelection); renderCart(); closeUniversalModal();
+            const btnId = btnMap[univSelection.category]; if(btnId) document.getElementById(btnId).classList.add("completed");
+        }
+    }
+
+    // --- CART RENDER & REMOVE ---
+    function removeItem(index) {
+        const removedItem = cart[index]; cart.splice(index, 1);
+        const category = removedItem.category;
+        const remaining = cart.filter(item => item.category === category);
+        if(remaining.length === 0) { const btnId = btnMap[category]; if(btnId) document.getElementById(btnId).classList.remove("completed"); }
+        renderCart();
+    }
+    function renderCart() {
+        const wrapper = document.getElementById("selectedWrapper");
+        if(cart.length === 0) { wrapper.style.display = "none"; return; } else { wrapper.style.display = "block"; }
+        const listDiv = document.getElementById("selectedList"), summaryBar = document.getElementById("summaryBar"), totalSpan = document.getElementById("totalAmount");
+        listDiv.innerHTML = "";
+        let total = 0;
+        cart.forEach((item, index) => {
+            total += item.price;
+            const card = document.createElement("div"); card.className = "selected-card";
+            card.innerHTML = `<div class="selected-card-title">${item.title}</div><div class="selected-card-details">${item.shape !== "Standard" ? `<strong>Type:</strong> ${item.shape} | ` : ""}<strong>Material:</strong> ${item.material} <br><strong>Details:</strong> ${item.size}</div><div class="selected-card-price">${formatPrice(item.price)}</div><button type="button" class="remove-card-btn" onclick="removeItem(${index})">×</button>`;
+            listDiv.appendChild(card);
+        });
+        summaryBar.style.display = "flex"; totalSpan.innerText = formatPrice(total);
+    }
+
+    // --- ENQUIRY ---
+    function openEnquiryModal() { if (cart.length === 0) { alert("Please add items."); return; } document.getElementById("enquiryModal").classList.add("show"); }
+    function closeEnquiryModal() { document.getElementById("enquiryModal").classList.remove("show"); }
+    function submitEnquiry() {
+        const n=document.getElementById("enqName").value, m=document.getElementById("enqMobile").value, l=document.getElementById("enqLocation").value;
+        if(!n||!m||!l){alert("Please fill Name, Mobile and Location.");return;}
+        alert("Enquiry submitted successfully!");
+        closeEnquiryModal();
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){ /* Initial setup */ });
+</script>
+</body>
+</html>
