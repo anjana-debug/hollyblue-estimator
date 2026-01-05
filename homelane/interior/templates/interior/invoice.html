@@ -8,8 +8,13 @@
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; color: #333; }
 
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #1a73e8; padding-bottom: 20px; }
-        .logo-section h1 { margin: 0; color: #1a73e8; font-size: 28px; text-transform: uppercase; }
-        .logo-section p { margin: 5px 0 0; font-size: 12px; color: #666; }
+
+        /* --- UPDATED LOGO SIZE --- */
+        .logo-section img {
+            height: 80px;  /* Normal invoice size */
+            width: auto;
+            object-fit: contain;
+        }
 
         .company-details { text-align: right; font-size: 12px; color: #555; line-height: 1.5; }
         .title { color: #1a73e8; font-size: 24px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
@@ -22,7 +27,7 @@
         /* TABLE STYLES */
         table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
 
-        /* NEW HEADINGS STYLE */
+        /* HEADINGS STYLE */
         thead { background-color: #f1f3f4; border-bottom: 2px solid #ccc; }
         th { text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; color: #444; font-weight: 800; }
 
@@ -52,11 +57,11 @@
 
     <div class="header">
         <div class="logo-section">
-            <h1>Holly Blue</h1>
-            <p>WE LISTEN. WE CREATE. YOU ENJOY!</p>
+            <img src="https://hollyblueinterio.com/images/abc/logo.png" alt="HollyBlue Logo">
         </div>
         <div class="company-details">
             <div class="title">QUOTATION</div>
+            <strong>Hollyblue Interio</strong><br>
             4th Floor, Door NO:51/2384/88,<br>
             LESHORE BUSINESS PARK, Aranattukara Village,<br>
             Poothole, Thoppinmoola, Thrissur, 680004
@@ -64,7 +69,6 @@
     </div>
 
     <div class="client-info">
-
         <div class="info-row">
             <div class="info-label">Client Name:</div>
             <div class="info-val">{{ enq.name }}</div>
